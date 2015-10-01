@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( objecttracker )
+find_package( OpenCV )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+add_executable( objecttracker objecttracker.cpp )
+target_link_libraries( objecttracker ${OpenCV_LIBS} )
