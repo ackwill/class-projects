@@ -1,0 +1,1 @@
+This directory is where you put the faces to be trained
