@@ -11,6 +11,7 @@ def makeProject():
 	print "--- Copying Sources ---"
 	shutil.copyfile(projectname+'.cpp', directory+"/"+projectname+'.cpp')
 	os.chdir(directory)
+	subprocess.call('cmake .')
 	print "-- Building Project ---"
 	subprocess.call('make')
 	print "---Running "+projectname+" ---"
@@ -32,7 +33,6 @@ if __name__ == "__main__":
 		os.makedirs(directory)
 		createMakefile()
 		makeProject()
-
 
 
 

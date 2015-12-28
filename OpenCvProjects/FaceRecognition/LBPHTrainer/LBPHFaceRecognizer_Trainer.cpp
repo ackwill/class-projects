@@ -48,14 +48,15 @@ int main(int argc, const char *argv[]) {
     }
     // Quit if there are not enough images.
     if(images.size() <= 1) {
-        string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
+        string error_message = "This needs at least 2 images to work. Please add more images to your data set!";
         CV_Error(Error::StsError, error_message);
     }
     
-    Ptr<LBPHFaceRecognizer> model = createLBPHFaceRecognizer();
+    //Ptr<LBPHFaceRecognizer> model = createLBPHFaceRecognizer();
+    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
     model->train(images, labels);
     
     // Save the model
-    model->save("lbphfaces_at.yml");
+    model->save("face_cascade.yml");
 }
 
