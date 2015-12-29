@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
     FaceRecognizer recg(model_file);
     Mat m = imread(fileToRec);
     if(!m.data) {
-        string error_message = "Picture to recognize faces was unable to be loaded.";
-        CV_Error(Error::StsError, error_message);
+        cout << "--(!)Picture to recognize faces was unable to be loaded." << endl;
+        exit(1);
     }
 
     recg.detectEyes = detectEyes;
