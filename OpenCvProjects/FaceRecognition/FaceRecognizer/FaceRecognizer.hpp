@@ -6,8 +6,8 @@
 #include "opencv2/face.hpp"
 #include <fstream>
 
-#ifndef FACERECOGNIZER_FACERECOGNIZER_H
-#define FACERECOGNIZER_FACERECOGNIZER_H
+#ifndef FACERECOGNIZER_FACERECOGNIZER_HPP
+#define FACERECOGNIZER_FACERECOGNIZER_HPP
 
 using namespace std;
 using namespace cv;
@@ -58,4 +58,4 @@ public:
 };
 
 
-#endif //FACERECOGNIZER_FACERECOGNIZER_H
+#endif //FACERECOGNIZER_FACERECOGNIZER_HPP

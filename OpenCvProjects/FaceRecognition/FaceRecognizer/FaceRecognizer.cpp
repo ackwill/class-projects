@@ -2,7 +2,7 @@
 // Created by Will Pittman on 12/28/15.
 //
 
-#include "FaceRecognizer.h"
+#include "FaceRecognizer.hpp"
 
 // Load cascades and LBPHFaceRecognizer model from files
 void FaceRecognizer::loadFiles() {
