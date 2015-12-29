@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( facerec_lbph )
-find_package( OpenCV )
-include_directories( ${OpenCV_INCLUDE_DIRS} )
-add_executable( facerec_lbph facerec_lbph.cpp )
-target_link_libraries( facerec_lbph ${OpenCV_LIBS} )
