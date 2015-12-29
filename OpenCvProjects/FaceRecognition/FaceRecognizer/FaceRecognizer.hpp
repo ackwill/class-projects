@@ -53,7 +53,7 @@ public:
 
     void setMinimumFaceSize(Size size) {minimum_face_size = size;};
 
-    bool detect_eyes = true;
+    bool detectEyes = true;
     bool showImage = true;
 };
 

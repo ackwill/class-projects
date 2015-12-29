@@ -26,6 +26,7 @@ FaceRecognizer::FaceRecognizer(const string &recognizer_file) {
 
 FaceRecognizer::FaceRecognizer(const string &recognizer_file, const string &face_cascade, const string &eyes_cascade) {
     recognizer_model_file = recognizer_file;
+    // TODO: check to make sure they are not empty
     face_cascade_name = face_cascade;
     eyes_cascade_name = eyes_cascade;
     loadFiles();
@@ -58,7 +59,7 @@ void FaceRecognizer::DetectFaces(Mat picture) {
     */
 
     // Detect eyes if told to do so
-    if(detect_eyes) {
+    if(detectEyes) {
         for (size_t i = 0; i < faces.size(); i++) {
             Mat faceMat = frame(faces[i].rect);
             eyes_cascade.detectMultiScale(faceMat, faces[i].eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
@@ -93,7 +94,7 @@ void FaceRecognizer::DrawFaces() {
         rectangle(frame, faces[i].rect, Scalar(255, 0, 255), 2*getTextScaleFromHeight());
 
         // Draw the eyes if told to do so
-        if (detect_eyes) {
+        if (detectEyes) {
             for (size_t j = 0; j < faces[i].eyes.size(); j++) {
                 Point center(faces[i].rect.x + faces[i].eyes[j].x + faces[i].eyes[j].width * 0.5,
                              faces[i].rect.y + faces[i].eyes[j].y + faces[i].eyes[j].height * 0.5);
@@ -119,8 +120,8 @@ void FaceRecognizer::DrawFaces() {
             imshow("Faces Detected", frame);
 
             char key = (char) waitKey(20);
-            // Exit this loop on escape:
-            if (key == 27) break;
+            // Exit this loop on escape or 'q'
+            if (key == 27 || key == 'q') break;
 
         }
     }
@@ -128,7 +129,8 @@ void FaceRecognizer::DrawFaces() {
 
 // Logs all faces or just the ones it recognizes depending on what it's told
 void FaceRecognizer::logDetectedFaces(bool justRecognized) {
-    ofstream logfile("output/DetectedFaces.txt");
+    const string fileName = "output/DetectedFaces.txt";
+    ofstream logfile(fileName);
     if(logfile.is_open()) {
         for(size_t i = 0; i < faces.size(); i++) {
 
@@ -139,10 +141,12 @@ void FaceRecognizer::logDetectedFaces(bool justRecognized) {
             }
         }
         logfile.close();
-    } else cout << "Unable to open output file" << endl;
+        cout << "Saved data to " << fileName << endl;
+    } else cout << "Unable to save detected faces" << endl;
 }
 
 // Used to find scale for text and line thickness (thickness *2)
 double FaceRecognizer::getTextScaleFromHeight() {
+    // rows = height, cols = width
     return (0.5 * frame.rows) / 640;
 }
