@@ -1,16 +1,13 @@
 # General #
 *.pgm
+.idea/
 
+OpenCvProjects/FaceRecognition/depricated/
 
-# LBPHTrainer igonre #
-OpenCvProjects/FaceRecognition/LBPHTrainer/Makefile
+# FaceRecognizer ignore #
+OpenCvProjects/FaceRecognition/FaceRecognizer/data/trainingdata/cfaces/
+OpenCvProjects/FaceRecognition/FaceRecognizer/data/testdata/grad.png
 
-OpenCvProjects/FaceRecognition/LBPHTrainer/LBPHFaceRecognizer_Trainer
-
-OpenCvProjects/FaceRecognition/LBPHTrainer/data/faces.txt
-
-OpenCvProjects/FaceRocognition/LBPHTrainer/CMakeCache.txt
-
-OpenCvProjects/FaceRocognition/LBPHTrainer/CMakeFiles/
-
-OpenCvProjects/FaceRocognition/LBPHTrainer/cmake_install.cmake
+#FaceDetect ignore #
+OpenCvProjects/FaceRecognition/FaceDetect/data/faces/ 
+OpenCvProjects/FaceRecognition/FaceDetect/data/results/ 
