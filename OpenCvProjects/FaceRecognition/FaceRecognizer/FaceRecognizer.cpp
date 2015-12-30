@@ -8,11 +8,11 @@
 void FaceRecognizer::loadFiles() {
     if( !face_cascade.load( face_cascade_name ) ) {
         cout << "--(!)Error loading face cascade" << endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     };
     if( !eyes_cascade.load( eyes_cascade_name ) ) {
         cout << "--(!)Error loading eyes cascade" << endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     };
 
     model->load(recognizer_model_file);
@@ -32,7 +32,7 @@ FaceRecognizer::FaceRecognizer(const string &recognizer_file, const string &face
     loadFiles();
 }
 
-void FaceRecognizer::DetectFaces(Mat picture) {
+void FaceRecognizer::detectFaces(Mat picture) {
     frame = picture;
 
     cvtColor( frame, gray_frame, CV_BGR2GRAY );
@@ -41,22 +41,28 @@ void FaceRecognizer::DetectFaces(Mat picture) {
     vector<Rect> tmpFaces;
 
     // Detect faces and store them in tmpFaces
-    face_cascade.detectMultiScale( gray_frame, tmpFaces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, minimum_face_size );
+    face_cascade.detectMultiScale( gray_frame, tmpFaces, 1.1, 3, 0|CV_HAAR_SCALE_IMAGE, minimum_face_size );
 
     // Create a FaceRec from the faces found in the image and find their center
+    faces.empty();
     faces.resize(tmpFaces.size());
     for(size_t i = 0; i < tmpFaces.size(); i++) {
         faces[i].rect = tmpFaces[i];
-        faces[i].center = Point(tmpFaces[i].x + tmpFaces[i].width*0.5, tmpFaces[i].y + tmpFaces[i].height*0.5 );
+        faces[i].center.x = cvRound(tmpFaces[i].x + tmpFaces[i].width*0.5) ;
+        faces[i].center.y = cvRound(tmpFaces[i].y + tmpFaces[i].height*0.5);
+        /*
+        //TODO: Figure out how to make the rectangle scaled without going out of bounds
+        // WHY? Because it might help
+        // Makes capture face to scale with trained images
+        int width = tmpFaces[i].width;
+        int height = (450 * width)/320;
+        Rect scaledROI(faces[i].center.x-(width/2), faces[i].center.y-(height/2), width, height);
+        faces[i].rect = scaledROI;
+         */
     }
 
-    //TODO: Make captured face to scale with trained images
-    // WHY? Because it might help
-    /* Makes capture face to scale with trained images
-    int width = faces[i].rect.width;
-    int height = (450 * width)/320;
-    Rect scaledROI(faces[i].center.x-(width/2), faces[i].center.y-(height/2), width, height);
-    */
+
+
 
     // Detect eyes if told to do so
     if(detectEyes) {
@@ -68,13 +74,16 @@ void FaceRecognizer::DetectFaces(Mat picture) {
 
 }
 
-void FaceRecognizer::RecognizeFaces() {
+void FaceRecognizer::recognizeFaces() {
     for(size_t i = 0; i < faces.size(); i++) {
         Mat predMat;
 
         // Resize to size of trained images
-        //TODO: this distorts the images and probably should be scaled above
+        //this distorts the images and probably should be scaled above
         resize(gray_frame(faces[i].rect), predMat, Size(320, 450));
+
+
+        //predMat = gray_frame(faces[i].rect);
 
         // Predict the face
         int predictedLabel = -1;
@@ -88,10 +97,10 @@ void FaceRecognizer::RecognizeFaces() {
     }
 }
 
-void FaceRecognizer::DrawFaces() {
+void FaceRecognizer::drawFaces() {
     for (size_t i = 0; i < faces.size(); i++) {
         // Draw the face rectangle
-        rectangle(frame, faces[i].rect, Scalar(255, 0, 255), 2*getTextScaleFromHeight());
+        rectangle(frame, faces[i].rect, Scalar(255, 0, 255), cvRound(2*getTextScaleFromHeight()));
 
         // Draw the eyes if told to do so
         if (detectEyes) {
@@ -143,6 +152,63 @@ void FaceRecognizer::logDetectedFaces(bool justRecognized) {
         logfile.close();
         cout << "Saved data to " << fileName << endl;
     } else cout << "Unable to save detected faces" << endl;
+}
+
+
+//TODO: Fix frame drop problem
+void FaceRecognizer::startVideoDetection(int camera, string file) {
+    VideoCapture capture;
+    if(camera == -1) capture.open(file);
+    else capture.open(camera);
+
+
+    if(capture.isOpened()) {
+
+        /*
+        time_t start, end;
+
+        double fps;
+
+        int counter = 0;
+
+        double sec;
+
+        time(&start);
+         */
+
+        while(true) {
+            capture >> frame;
+            if(frame.empty()) break;
+
+            //time(&end);
+
+            detectFaces(frame);
+            recognizeFaces();
+            drawFaces();
+            imshow("image", frame);
+
+            // Maybe it should sleep here or not...
+            //sleep(10);
+
+            /*
+            ++counter;
+            sec = difftime (end, start);
+
+            fps = counter / sec / 1000;
+
+            cout << (int)fps << endl;
+            //int scale = getTextScaleFromHeight();
+            //putText(frame, fps, Point(0,0), CV_FONT_NORMAL, scale, Scalar(127, 255, 0), 2*scale);
+             */
+
+            int c = waitKey(10);
+            if( c == 27 || c == 'q' || c == 'Q' ) break;
+        }
+        capture.release();
+    } else {
+        cout << "--(!) Error: Unable to opnen camera " << camera << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 // Used to find scale for text and line thickness (thickness *2)

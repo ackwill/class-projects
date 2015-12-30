@@ -57,6 +57,6 @@ void LBPHTrainer::read_csv(const string &file, vector<Mat> &images, vector<int> 
         csv_file.close();
     } else {
         cout << "File unable to be opened.";
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }

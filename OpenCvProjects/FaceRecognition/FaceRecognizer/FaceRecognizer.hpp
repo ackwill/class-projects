@@ -46,10 +46,12 @@ class FaceRecognizer {
 public:
     FaceRecognizer(const string &recognizer_file);
     FaceRecognizer(const string &recognizer_file, const string &face_cascade, const string &eyes_cascade);
-    void DetectFaces(Mat picture);
-    void RecognizeFaces();
-    void DrawFaces();
+
+    void detectFaces(Mat picture);
+    void recognizeFaces();
+    void drawFaces();
     void logDetectedFaces(bool justRecognized);
+    void startVideoDetection(int camera, string file);
 
     void setMinimumFaceSize(Size size) {minimum_face_size = size;};
 
