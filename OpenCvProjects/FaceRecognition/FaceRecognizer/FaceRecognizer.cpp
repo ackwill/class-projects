@@ -15,7 +15,11 @@ void FaceRecognizer::loadFiles() {
         exit(EXIT_FAILURE);
     };
 
-    model->load(recognizer_model_file);
+    try {
+        model->load(recognizer_model_file);
+    } catch(cv::Exception& e) {
+        cout << "Unable to load the model file" << endl;
+    }
 }
 
 FaceRecognizer::FaceRecognizer(const string &recognizer_file) {
@@ -26,7 +30,6 @@ FaceRecognizer::FaceRecognizer(const string &recognizer_file) {
 
 FaceRecognizer::FaceRecognizer(const string &recognizer_file, const string &face_cascade, const string &eyes_cascade) {
     recognizer_model_file = recognizer_file;
-    // TODO: check to make sure they are not empty
     face_cascade_name = face_cascade;
     eyes_cascade_name = eyes_cascade;
     loadFiles();
@@ -62,8 +65,6 @@ void FaceRecognizer::detectFaces(Mat picture) {
     }
 
 
-
-
     // Detect eyes if told to do so
     if(detectEyes) {
         for (size_t i = 0; i < faces.size(); i++) {
@@ -80,6 +81,7 @@ void FaceRecognizer::recognizeFaces() {
 
         // Resize to size of trained images
         //this distorts the images and probably should be scaled above
+        //TODO: This only works for my dataset
         resize(gray_frame(faces[i].rect), predMat, Size(320, 450));
 
 
@@ -119,9 +121,11 @@ void FaceRecognizer::drawFaces() {
 
     }
 
-    //TODO: Change this for when detected from camera
+
+    //TODO: The rest can probably be moved to another function
     // Write image to file and display it if asked to do so
-    imwrite("output/detected.png", frame);
+    if(!doingVideo)
+        imwrite("output/detected.png", frame);
 
     if(showImage) {
         while (1) {
@@ -139,7 +143,7 @@ void FaceRecognizer::drawFaces() {
 // Logs all faces or just the ones it recognizes depending on what it's told
 void FaceRecognizer::logDetectedFaces(bool justRecognized) {
     const string fileName = "output/DetectedFaces.txt";
-    ofstream logfile(fileName);
+    ofstream logfile(fileName, ios::app); //Opens to be added to the end
     if(logfile.is_open()) {
         for(size_t i = 0; i < faces.size(); i++) {
 
@@ -156,6 +160,7 @@ void FaceRecognizer::logDetectedFaces(bool justRecognized) {
 
 
 //TODO: Fix frame drop problem
+// Recognition problem could be that camera is backwars to the pictures that are taken or the other way around
 void FaceRecognizer::startVideoDetection(int camera, string file) {
     VideoCapture capture;
     if(camera == -1) capture.open(file);
@@ -204,9 +209,59 @@ void FaceRecognizer::startVideoDetection(int camera, string file) {
             int c = waitKey(10);
             if( c == 27 || c == 'q' || c == 'Q' ) break;
         }
-        capture.release();
     } else {
         cout << "--(!) Error: Unable to opnen camera " << camera << endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+void FaceRecognizer::takePictures(string path) {
+
+    int count = 1;
+    string file;
+
+    while(true) {
+        file = path + "/" + to_string(count) + ".png";
+        if(!boost::filesystem::exists(file)) break;
+        count++;
+    }
+
+    VideoCapture capture(0);
+
+    if(capture.isOpened()) {
+
+        while(true) {
+            capture >> frame;
+            if(frame.empty()) break;
+
+
+            detectFaces(frame);
+            //flip(frame, frame, 1);
+            drawFaces();
+
+            Rect r;
+
+            for(auto a : faces) {
+                if(a.rect.area() > r.area()) {
+                    r = a.rect;
+                }
+            }
+
+            //if(!frame(r).empty())
+            imshow("Press [SPACE] to take picture", frame);
+
+            int c = waitKey(10);
+            if( c == 27 || c == 'q' || c == 'Q' ) break;
+            if( c == 32 && r.area() != 0) { // [SPACE]
+                file = path + "/" + to_string(count) + ".png";
+                imwrite(file, frame(r));
+                cout << "Face saved to " << file << endl;
+                count++;
+            }
+        }
+        capture.release();
+    } else {
+        cout << "--(!) Error: Unable to opnen camera " << 0 << endl;
         exit(EXIT_FAILURE);
     }
 }

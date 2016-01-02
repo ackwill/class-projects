@@ -5,7 +5,7 @@
 OpenCvProjects/FaceRecognition/depricated/
 
 # FaceRecognizer ignore #
-OpenCvProjects/FaceRecognition/FaceRecognizer/data/trainingdata/cfaces/
+OpenCvProjects/FaceRecognition/FaceRecognizer/data/trainingdata/faces/
 OpenCvProjects/FaceRecognition/FaceRecognizer/data/testdata/grad.png
 
 #FaceDetect ignore #

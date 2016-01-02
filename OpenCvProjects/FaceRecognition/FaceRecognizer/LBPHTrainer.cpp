@@ -4,6 +4,8 @@
 
 #include "LBPHTrainer.hpp"
 
+namespace fs = boost::filesystem;
+
 void LBPHTrainer::train(const string &path_to_csv, const string &path_to_save) {
     vector<Mat> images;
     vector<int> labels;
@@ -56,7 +58,41 @@ void LBPHTrainer::read_csv(const string &file, vector<Mat> &images, vector<int> 
         }
         csv_file.close();
     } else {
-        cout << "File unable to be opened.";
+        cout << "Csv file unable to be opened.";
         exit(EXIT_FAILURE);
     }
+}
+
+void LBPHTrainer::updateCSV(const string &pathToCsv) {
+    fs::path path(pathToCsv);
+    ofstream csvFile(pathToCsv);
+    vector<fs::path> paths;
+
+    if(csvFile.is_open()) {
+        path.remove_leaf();
+
+        //Get all directories in faces directory
+        for (fs::directory_iterator dir_iter(path); dir_iter != fs::directory_iterator(); ++dir_iter) {
+            fs::path p = dir_iter->path();
+            if (fs::is_directory(p))
+                paths.push_back(p);
+        }
+
+        //Add new faces to csv file
+        for (int i = 0; i < paths.size(); i++) {
+            string name = paths[i].leaf().string();
+            name[0] = (char) toupper(name[0]);
+            csvFile << "#" << name << endl;
+            for (fs::directory_iterator dir_iter(paths[i]); dir_iter != fs::directory_iterator(); ++dir_iter) {
+                fs::path p = dir_iter->path();
+                if (fs::is_regular_file(p) && p.filename().string()[0] != '.')
+                    csvFile << p.string() << ";" << i << endl;
+            }
+        }
+        csvFile.close();
+    } else {
+        cout << "Csv file unable to be opened.";
+        exit(EXIT_FAILURE);
+    }
+
 }

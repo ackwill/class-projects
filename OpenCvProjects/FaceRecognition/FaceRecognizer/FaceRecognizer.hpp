@@ -4,6 +4,8 @@
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/face.hpp"
+
+#include <boost/filesystem.hpp>
 #include <fstream>
 
 #ifndef FACERECOGNIZER_FACERECOGNIZER_HPP
@@ -11,7 +13,6 @@
 
 using namespace std;
 using namespace cv;
-//using namespace cv::face;
 
 
 struct FaceRect {
@@ -53,10 +54,13 @@ public:
     void logDetectedFaces(bool justRecognized);
     void startVideoDetection(int camera, string file);
 
+    void takePictures(string path);
+
     void setMinimumFaceSize(Size size) {minimum_face_size = size;};
 
-    bool detectEyes = true;
-    bool showImage = true;
+    bool detectEyes = false;
+    bool showImage = false;
+    bool doingVideo = false;
 };
 
 
