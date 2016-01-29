@@ -1,13 +1,18 @@
 # General #
 *.pgm
 .idea/
+*.swp
 
 OpenCvProjects/FaceRecognition/depricated/
+
+OpenCvProjects/FaceRecognition/FaceRecognizer/.ycm_extra_conf.py
+OpenCvProjects/FaceRecognition/FaceRecognizer/.ycm_extra_conf.pyc
+
 
 # FaceRecognizer ignore #
 OpenCvProjects/FaceRecognition/FaceRecognizer/data/trainingdata/faces/
 OpenCvProjects/FaceRecognition/FaceRecognizer/data/testdata/grad.png
 
 #FaceDetect ignore #
-OpenCvProjects/FaceRecognition/FaceDetect/data/faces/ 
-OpenCvProjects/FaceRecognition/FaceDetect/data/results/ 
+OpenCvProjects/FaceRecognition/FaceDetect/data/faces/
+OpenCvProjects/FaceRecognition/FaceDetect/data/results/

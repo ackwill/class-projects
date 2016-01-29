@@ -7,11 +7,11 @@
 // Load cascades and LBPHFaceRecognizer model from files
 void FaceRecognizer::loadFiles() {
     if( !face_cascade.load( face_cascade_name ) ) {
-        cout << "--(!)Error loading face cascade" << endl;
+        cout << "--(!)Error loading face cascade from " << face_cascade_name << endl;
         exit(EXIT_FAILURE);
     };
     if( !eyes_cascade.load( eyes_cascade_name ) ) {
-        cout << "--(!)Error loading eyes cascade" << endl;
+        cout << "--(!)Error loading eyes cascade from " << eyes_cascade_name << endl;
         exit(EXIT_FAILURE);
     };
 
@@ -75,6 +75,8 @@ void FaceRecognizer::detectFaces(Mat picture) {
 
 }
 
+
+//TODO: Rotate faces to be aligned for better detection. Do this for taking pictures too.
 void FaceRecognizer::recognizeFaces() {
     for(size_t i = 0; i < faces.size(); i++) {
         Mat predMat;
@@ -82,10 +84,10 @@ void FaceRecognizer::recognizeFaces() {
         // Resize to size of trained images
         //this distorts the images and probably should be scaled above
         //TODO: This only works for my dataset
-        resize(gray_frame(faces[i].rect), predMat, Size(320, 450));
+        //resize(gray_frame(faces[i].rect), predMat, Size(320, 450));
 
 
-        //predMat = gray_frame(faces[i].rect);
+        predMat = gray_frame(faces[i].rect);
 
         // Predict the face
         int predictedLabel = -1;

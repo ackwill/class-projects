@@ -115,6 +115,9 @@ int main(int argc, char *argv[]) {
     // convert arguments to vector
     vector<string> arguments(argv, argv + argc);
 
+	//Create missing directories
+    prepDirectory();
+
     if((argc < 2) || (arguments[1] == "--help") || (arguments[1] == "-help")) {
         help(arguments[0]);
         //TODO: Add optional cascade paths and model output path and output log path
@@ -159,8 +162,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    //Create missing directories
-    prepDirectory();
 
     if((!std::ifstream(model_file).good() || retrain) && !addFace) {
         LBPHTrainer::train(csv_file, model_file);

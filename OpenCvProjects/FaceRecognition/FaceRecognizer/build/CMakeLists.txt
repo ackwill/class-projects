@@ -9,7 +9,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 find_package( Boost 1.60.0 COMPONENTS filesystem system)
 include_directories( ${Boost_INCLUDE_DIRS})
 
-set(SOURCE_FILES main.cpp FaceRecognizer.cpp FaceRecognizer.hpp LBPHTrainer.cpp LBPHTrainer.hpp)
+set(SOURCE_FILES ../main.cpp ../FaceRecognizer.cpp ../FaceRecognizer.hpp ../LBPHTrainer.cpp ../LBPHTrainer.hpp)
 add_executable(FaceRecognizer ${SOURCE_FILES})
 
 target_link_libraries( FaceRecognizer ${OpenCV_LIBS})
